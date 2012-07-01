@@ -10,7 +10,7 @@
     xmlns:common="using:GridAppWithoutTheNoise.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:DataModel="using:GridAppWithoutTheNoise.DataModel" mc:Ignorable="d">
 
     <Page.Resources>
 
@@ -23,7 +23,7 @@
             Source="{Binding Groups}"
             IsSourceGrouped="true"
             ItemsPath="TopItems"
-            d:Source="{Binding AllGroups, Source={d:DesignInstance Type=data:SampleDataSource, IsDesignTimeCreatable=True}}"/>
+            d:Source="{Binding AllGroups, Source={d:DesignInstance Type=DataModel:SampleDataSource, IsDesignTimeCreatable=True}}"/>
     </Page.Resources>
 
     <!--
@@ -59,7 +59,7 @@
             ItemTemplate="{StaticResource Standard250x250ItemTemplate}"
             SelectionMode="None"
             IsItemClickEnabled="True"
-            ItemClick="ItemView_ItemClick">
+            ItemClick="ItemViewItemClick">
 
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>                        
@@ -74,7 +74,7 @@
                                 <Button
                                     AutomationProperties.Name="Group Title"
                                     Content="{Binding Title}"
-                                    Click="Header_Click"
+                                    Click="HeaderClick"
                                     Style="{StaticResource TextButtonStyle}"/>
                             </Grid>
                         </DataTemplate>
@@ -101,7 +101,7 @@
             ItemTemplate="{StaticResource Standard80ItemTemplate}"
             SelectionMode="None"
             IsItemClickEnabled="True"
-            ItemClick="ItemView_ItemClick">
+            ItemClick="ItemViewItemClick">
 
             <ListView.GroupStyle>
                 <GroupStyle>
@@ -111,7 +111,7 @@
                                 <Button
                                     AutomationProperties.Name="Group Title"
                                     Content="{Binding Title}"
-                                    Click="Header_Click"
+                                    Click="HeaderClick"
                                     Style="{StaticResource TextButtonStyle}"/>
                             </Grid>
                         </DataTemplate>
