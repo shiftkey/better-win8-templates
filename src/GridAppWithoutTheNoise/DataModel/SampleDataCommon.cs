@@ -8,70 +8,70 @@ namespace GridAppWithoutTheNoise.DataModel
     [Windows.Foundation.Metadata.WebHostHidden]
     public abstract class SampleDataCommon : BindableBase
     {
-        private static Uri _baseUri = new Uri("ms-appx:///");
+        static readonly Uri BaseUri = new Uri("ms-appx:///");
 
-        public SampleDataCommon(String uniqueId, String title, String subtitle, String imagePath, String description)
+        protected SampleDataCommon(String uniqueId, String title, String subtitle, String imagePath, String description)
         {
-            this._uniqueId = uniqueId;
-            this._title = title;
-            this._subtitle = subtitle;
-            this._description = description;
-            this._imagePath = imagePath;
+            this.uniqueId = uniqueId;
+            this.title = title;
+            this.subtitle = subtitle;
+            this.description = description;
+            this.imagePath = imagePath;
         }
 
-        private string _uniqueId = string.Empty;
+        string uniqueId = string.Empty;
         public string UniqueId
         {
-            get { return this._uniqueId; }
-            set { this.SetProperty(ref this._uniqueId, value); }
+            get { return uniqueId; }
+            set { SetProperty(ref uniqueId, value); }
         }
 
-        private string _title = string.Empty;
+        private string title = string.Empty;
         public string Title
         {
-            get { return this._title; }
-            set { this.SetProperty(ref this._title, value); }
+            get { return title; }
+            set { SetProperty(ref title, value); }
         }
 
-        private string _subtitle = string.Empty;
+        private string subtitle = string.Empty;
         public string Subtitle
         {
-            get { return this._subtitle; }
-            set { this.SetProperty(ref this._subtitle, value); }
+            get { return subtitle; }
+            set { SetProperty(ref subtitle, value); }
         }
 
-        private string _description = string.Empty;
+        private string description = string.Empty;
         public string Description
         {
-            get { return this._description; }
-            set { this.SetProperty(ref this._description, value); }
+            get { return description; }
+            set { SetProperty(ref description, value); }
         }
 
-        private ImageSource _image = null;
-        private String _imagePath = null;
+        private ImageSource image;
+        private String imagePath;
         public ImageSource Image
         {
             get
             {
-                if (this._image == null && this._imagePath != null)
+                if (image == null && imagePath != null)
                 {
-                    this._image = new BitmapImage(new Uri(SampleDataCommon._baseUri, this._imagePath));
+                    image = new BitmapImage(new Uri(BaseUri, imagePath));
                 }
-                return this._image;
+                return image;
             }
 
             set
             {
-                this._imagePath = null;
-                this.SetProperty(ref this._image, value);
+                imagePath = null;
+                SetProperty(ref image, value);
             }
         }
 
         public void SetImage(String path)
         {
-            this._image = null;
-            this._imagePath = path;
-            this.OnPropertyChanged("Image");
+            image = null;
+            imagePath = path;
+            OnPropertyChanged("Image");
         }
     }
 }

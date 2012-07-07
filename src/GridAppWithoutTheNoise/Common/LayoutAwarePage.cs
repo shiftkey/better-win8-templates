@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -33,17 +32,18 @@ namespace GridAppWithoutTheNoise.Common
     /// </item>
     /// </list>
     /// </summary>
-    [Windows.Foundation.Metadata.WebHostHidden]
+    [WebHostHidden]
     public class LayoutAwarePage : Page
     {
         /// <summary>
         /// Identifies the <see cref="DefaultViewModel"/> dependency property.
         /// </summary>
+        [Obsolete]
         public static readonly DependencyProperty DefaultViewModelProperty =
             DependencyProperty.Register("DefaultViewModel", typeof(IObservableMap<String, Object>),
-            typeof(LayoutAwarePage), null);
+                             typeof(LayoutAwarePage), null);
 
-        private List<Control> _layoutAwareControls;
+        private List<Control> layoutAwareControls;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutAwarePage"/> class.
@@ -53,63 +53,45 @@ namespace GridAppWithoutTheNoise.Common
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
 
             // Create an empty default view model
-            this.DefaultViewModel = new ObservableDictionary<String, Object>();
+            DefaultViewModel = new ObservableDictionary<String, Object>();
 
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
             // 2) Handle keyboard and mouse navigation requests
-            this.Loaded += (sender, e) =>
-            {
-                this.StartLayoutUpdates(sender, e);
-
-                // Keyboard and mouse navigation only apply when occupying the entire window
-                if (this.ActualHeight == Window.Current.Bounds.Height &&
-                    this.ActualWidth == Window.Current.Bounds.Width)
+            Loaded += (sender, e) =>
                 {
-                    // Listen to the window directly so focus isn't required
-                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
-                        CoreDispatcher_AcceleratorKeyActivated;
-                    Window.Current.CoreWindow.PointerPressed +=
-                        this.CoreWindow_PointerPressed;
-                }
-            };
+                    StartLayoutUpdates(sender, e);
+
+                    // Keyboard and mouse navigation only apply when occupying the entire window
+                    if (ActualHeight == Window.Current.Bounds.Height &&
+                        ActualWidth == Window.Current.Bounds.Width)
+                    {
+                        // Listen to the window directly so focus isn't required
+                        Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
+                            CoreDispatcher_AcceleratorKeyActivated;
+                        Window.Current.CoreWindow.PointerPressed +=
+                            CoreWindow_PointerPressed;
+                    }
+                };
 
             // Undo the same changes when the page is no longer visible
-            this.Unloaded += (sender, e) =>
-            {
-                this.StopLayoutUpdates(sender, e);
-                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
-                    CoreDispatcher_AcceleratorKeyActivated;
-                Window.Current.CoreWindow.PointerPressed -=
-                    this.CoreWindow_PointerPressed;
-            };
+            Unloaded += (sender, e) =>
+                {
+                    StopLayoutUpdates(sender, e);
+                    Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
+                        CoreDispatcher_AcceleratorKeyActivated;
+                    Window.Current.CoreWindow.PointerPressed -=
+                        this.CoreWindow_PointerPressed;
+                };
         }
 
-        /// <summary>
-        /// An implementation of <see cref="IObservableMap&lt;String, Object&gt;"/> designed to be
-        /// used as a trivial view model.
-        /// </summary>
+        [Obsolete]
         protected IObservableMap<String, Object> DefaultViewModel
         {
-            get
-            {
-                return this.GetValue(DefaultViewModelProperty) as IObservableMap<String, Object>;
-            }
-
-            set
-            {
-                this.SetValue(DefaultViewModelProperty, value);
-            }
+            get { return GetValue(DefaultViewModelProperty) as IObservableMap<String, Object>; }
+            set { SetValue(DefaultViewModelProperty, value); }
         }
 
-        #region Navigation support
-
-        /// <summary>
-        /// Invoked as an event handler to navigate backward in the page's associated
-        /// <see cref="Frame"/> until it reaches the top of the navigation stack.
-        /// </summary>
-        /// <param name="sender">Instance that triggered the event.</param>
-        /// <param name="e">Event data describing the conditions that led to the event.</param>
         protected virtual void GoHome(object sender, RoutedEventArgs e)
         {
             // Use the navigation frame to return to the topmost page
@@ -153,16 +135,16 @@ namespace GridAppWithoutTheNoise.Common
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="args">Event data describing the conditions that led to the event.</param>
         private void CoreDispatcher_AcceleratorKeyActivated(CoreDispatcher sender,
-            AcceleratorKeyEventArgs args)
+                                                            AcceleratorKeyEventArgs args)
         {
             var virtualKey = args.VirtualKey;
 
             // Only investigate further when Left, Right, or the dedicated Previous or Next keys
             // are pressed
             if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown ||
-                args.EventType == CoreAcceleratorKeyEventType.KeyDown) &&
+                 args.EventType == CoreAcceleratorKeyEventType.KeyDown) &&
                 (virtualKey == VirtualKey.Left || virtualKey == VirtualKey.Right ||
-                (int)virtualKey == 166 || (int)virtualKey == 167))
+                 (int)virtualKey == 166 || (int)virtualKey == 167))
             {
                 var coreWindow = Window.Current.CoreWindow;
                 var downState = CoreVirtualKeyStates.Down;
@@ -180,7 +162,7 @@ namespace GridAppWithoutTheNoise.Common
                     this.GoBack(this, new RoutedEventArgs());
                 }
                 else if (((int)virtualKey == 167 && noModifiers) ||
-                    (virtualKey == VirtualKey.Right && onlyAlt))
+                         (virtualKey == VirtualKey.Right && onlyAlt))
                 {
                     // When the next key or Alt+Right are pressed navigate forward
                     args.Handled = true;
@@ -197,7 +179,7 @@ namespace GridAppWithoutTheNoise.Common
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="args">Event data describing the conditions that led to the event.</param>
         private void CoreWindow_PointerPressed(CoreWindow sender,
-            PointerEventArgs args)
+                                               PointerEventArgs args)
         {
             var properties = args.CurrentPoint.Properties;
 
@@ -215,10 +197,6 @@ namespace GridAppWithoutTheNoise.Common
                 if (forwardPressed) this.GoForward(this, new RoutedEventArgs());
             }
         }
-
-        #endregion
-
-        #region Visual state switching
 
         /// <summary>
         /// Invoked as an event handler, typically on the <see cref="FrameworkElement.Loaded"/>
@@ -241,13 +219,13 @@ namespace GridAppWithoutTheNoise.Common
         {
             var control = sender as Control;
             if (control == null) return;
-            if (this._layoutAwareControls == null)
+            if (this.layoutAwareControls == null)
             {
                 // Start listening to view state changes when there are controls interested in updates
                 Window.Current.SizeChanged += this.WindowSizeChanged;
-                this._layoutAwareControls = new List<Control>();
+                this.layoutAwareControls = new List<Control>();
             }
-            this._layoutAwareControls.Add(control);
+            this.layoutAwareControls.Add(control);
 
             // Set the initial visual state of the control
             VisualStateManager.GoToState(control, DetermineVisualState(ApplicationView.Value), false);
@@ -272,12 +250,12 @@ namespace GridAppWithoutTheNoise.Common
         public void StopLayoutUpdates(object sender, RoutedEventArgs e)
         {
             var control = sender as Control;
-            if (control == null || this._layoutAwareControls == null) return;
-            this._layoutAwareControls.Remove(control);
-            if (this._layoutAwareControls.Count == 0)
+            if (control == null || this.layoutAwareControls == null) return;
+            this.layoutAwareControls.Remove(control);
+            if (this.layoutAwareControls.Count == 0)
             {
                 // Stop listening to view state changes when no controls are interested in updates
-                this._layoutAwareControls = null;
+                this.layoutAwareControls = null;
                 Window.Current.SizeChanged -= this.WindowSizeChanged;
             }
         }
@@ -307,19 +285,15 @@ namespace GridAppWithoutTheNoise.Common
         /// </remarks>
         public void InvalidateVisualState()
         {
-            if (this._layoutAwareControls != null)
+            if (this.layoutAwareControls != null)
             {
                 string visualState = DetermineVisualState(ApplicationView.Value);
-                foreach (var layoutAwareControl in this._layoutAwareControls)
+                foreach (var layoutAwareControl in this.layoutAwareControls)
                 {
                     VisualStateManager.GoToState(layoutAwareControl, visualState, false);
                 }
             }
         }
-
-        #endregion
-
-        #region Process lifetime management
 
         private String _pageKey;
 
@@ -395,149 +369,149 @@ namespace GridAppWithoutTheNoise.Common
         protected virtual void SaveState(Dictionary<String, Object> pageState)
         {
         }
+    }
 
-        #endregion
+    /// <summary>
+    /// Implementation of IObservableMap that supports reentrancy for use as a default view
+    /// model.
+    /// </summary>
+    public class ObservableDictionary<TK, TV> : IObservableMap<TK, TV>
+    {
+        readonly Dictionary<TK, TV> dictionary = new Dictionary<TK, TV>();
 
-        /// <summary>
-        /// Implementation of IObservableMap that supports reentrancy for use as a default view
-        /// model.
-        /// </summary>
-        private class ObservableDictionary<K, V> : IObservableMap<K, V>
+        private class ObservableDictionaryChangedEventArgs : IMapChangedEventArgs<TK>
         {
-            private class ObservableDictionaryChangedEventArgs : IMapChangedEventArgs<K>
+            public ObservableDictionaryChangedEventArgs(CollectionChange change, TK key)
             {
-                public ObservableDictionaryChangedEventArgs(CollectionChange change, K key)
-                {
-                    this.CollectionChange = change;
-                    this.Key = key;
-                }
-
-                public CollectionChange CollectionChange { get; private set; }
-                public K Key { get; private set; }
+                CollectionChange = change;
+                Key = key;
             }
 
-            private Dictionary<K, V> _dictionary = new Dictionary<K, V>();
-            public event MapChangedEventHandler<K, V> MapChanged;
+            public CollectionChange CollectionChange { get; private set; }
+            public TK Key { get; private set; }
+        }
 
-            private void InvokeMapChanged(CollectionChange change, K key)
+        public event MapChangedEventHandler<TK, TV> MapChanged;
+
+        private void InvokeMapChanged(CollectionChange change, TK key)
+        {
+            var eventHandler = MapChanged;
+            if (eventHandler != null)
             {
-                var eventHandler = MapChanged;
-                if (eventHandler != null)
-                {
-                    eventHandler(this, new ObservableDictionaryChangedEventArgs(CollectionChange.ItemInserted, key));
-                }
+                eventHandler(this, new ObservableDictionaryChangedEventArgs(change, key));
             }
+        }
 
-            public void Add(K key, V value)
+        public void Add(TK key, TV value)
+        {
+            dictionary.Add(key, value);
+            InvokeMapChanged(CollectionChange.ItemInserted, key);
+        }
+
+        public void Add(KeyValuePair<TK, TV> item)
+        {
+            Add(item.Key, item.Value);
+        }
+
+        public bool Remove(TK key)
+        {
+            if (dictionary.Remove(key))
             {
-                this._dictionary.Add(key, value);
-                this.InvokeMapChanged(CollectionChange.ItemInserted, key);
+                InvokeMapChanged(CollectionChange.ItemRemoved, key);
+                return true;
             }
+            return false;
+        }
 
-            public void Add(KeyValuePair<K, V> item)
+        public bool Remove(KeyValuePair<TK, TV> item)
+        {
+            TV currentValue;
+            if (dictionary.TryGetValue(item.Key, out currentValue) &&
+                Equals(item.Value, currentValue) && dictionary.Remove(item.Key))
             {
-                this.Add(item.Key, item.Value);
+                this.InvokeMapChanged(CollectionChange.ItemRemoved, item.Key);
+                return true;
             }
+            return false;
+        }
 
-            public bool Remove(K key)
+        public TV this[TK key]
+        {
+            get
             {
-                if (this._dictionary.Remove(key))
-                {
-                    this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
-                    return true;
-                }
-                return false;
+                return this.dictionary[key];
             }
-
-            public bool Remove(KeyValuePair<K, V> item)
+            set
             {
-                V currentValue;
-                if (this._dictionary.TryGetValue(item.Key, out currentValue) &&
-                    Object.Equals(item.Value, currentValue) && this._dictionary.Remove(item.Key))
-                {
-                    this.InvokeMapChanged(CollectionChange.ItemRemoved, item.Key);
-                    return true;
-                }
-                return false;
+                this.dictionary[key] = value;
+                this.InvokeMapChanged(CollectionChange.ItemChanged, key);
             }
+        }
 
-            public V this[K key]
+        public void Clear()
+        {
+            var priorKeys = this.dictionary.Keys.ToArray();
+            this.dictionary.Clear();
+            foreach (var key in priorKeys)
             {
-                get
-                {
-                    return this._dictionary[key];
-                }
-                set
-                {
-                    this._dictionary[key] = value;
-                    this.InvokeMapChanged(CollectionChange.ItemChanged, key);
-                }
+                this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
             }
+        }
 
-            public void Clear()
-            {
-                var priorKeys = this._dictionary.Keys.ToArray();
-                this._dictionary.Clear();
-                foreach (var key in priorKeys)
-                {
-                    this.InvokeMapChanged(CollectionChange.ItemRemoved, key);
-                }
-            }
+        public ICollection<TK> Keys
+        {
+            get { return this.dictionary.Keys; }
+        }
 
-            public ICollection<K> Keys
-            {
-                get { return this._dictionary.Keys; }
-            }
+        public bool ContainsKey(TK key)
+        {
+            return this.dictionary.ContainsKey(key);
+        }
 
-            public bool ContainsKey(K key)
-            {
-                return this._dictionary.ContainsKey(key);
-            }
+        public bool TryGetValue(TK key, out TV value)
+        {
+            return this.dictionary.TryGetValue(key, out value);
+        }
 
-            public bool TryGetValue(K key, out V value)
-            {
-                return this._dictionary.TryGetValue(key, out value);
-            }
+        public ICollection<TV> Values
+        {
+            get { return this.dictionary.Values; }
+        }
 
-            public ICollection<V> Values
-            {
-                get { return this._dictionary.Values; }
-            }
+        public bool Contains(KeyValuePair<TK, TV> item)
+        {
+            return this.dictionary.Contains(item);
+        }
 
-            public bool Contains(KeyValuePair<K, V> item)
-            {
-                return this._dictionary.Contains(item);
-            }
+        public int Count
+        {
+            get { return this.dictionary.Count; }
+        }
 
-            public int Count
-            {
-                get { return this._dictionary.Count; }
-            }
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
 
-            public bool IsReadOnly
-            {
-                get { return false; }
-            }
+        public IEnumerator<KeyValuePair<TK, TV>> GetEnumerator()
+        {
+            return this.dictionary.GetEnumerator();
+        }
 
-            public IEnumerator<KeyValuePair<K, V>> GetEnumerator()
-            {
-                return this._dictionary.GetEnumerator();
-            }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.dictionary.GetEnumerator();
+        }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        public void CopyTo(KeyValuePair<TK, TV>[] array, int arrayIndex)
+        {
+            int arraySize = array.Length;
+            foreach (var pair in this.dictionary)
             {
-                return this._dictionary.GetEnumerator();
-            }
-
-            public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex)
-            {
-                int arraySize = array.Length;
-                foreach (var pair in this._dictionary)
-                {
-                    if (arrayIndex >= arraySize) break;
-                    array[arrayIndex++] = pair;
-                }
+                if (arrayIndex >= arraySize) break;
+                array[arrayIndex++] = pair;
             }
         }
     }
 }
+

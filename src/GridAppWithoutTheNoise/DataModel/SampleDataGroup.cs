@@ -5,9 +5,6 @@ using System.Linq;
 
 namespace GridAppWithoutTheNoise.DataModel
 {
-    /// <summary>
-    /// Generic group data model.
-    /// </summary>
     public class SampleDataGroup : SampleDataCommon
     {
         public SampleDataGroup(String uniqueId, String title, String subtitle, String imagePath, String description)
@@ -15,10 +12,10 @@ namespace GridAppWithoutTheNoise.DataModel
         {
         }
 
-        private ObservableCollection<SampleDataItem> _items = new ObservableCollection<SampleDataItem>();
+        private readonly ObservableCollection<SampleDataItem> items = new ObservableCollection<SampleDataItem>();
         public ObservableCollection<SampleDataItem> Items
         {
-            get { return this._items; }
+            get { return items; }
         }
         
         public IEnumerable<SampleDataItem> TopItems
@@ -30,7 +27,7 @@ namespace GridAppWithoutTheNoise.DataModel
             //
             // A maximum of 12 items are displayed because it results in filled grid columns
             // whether there are 1, 2, 3, 4, or 6 rows displayed
-            get { return this._items.Take(12); }
+            get { return items.Take(12); }
         }
     }
 }

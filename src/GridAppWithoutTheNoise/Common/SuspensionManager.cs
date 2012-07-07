@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -22,9 +18,9 @@ namespace GridAppWithoutTheNoise.Common
     /// </summary>
     internal sealed class SuspensionManager
     {
-        private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();
-        private static List<Type> _knownTypes = new List<Type>();
-        private const string sessionStateFilename = "_sessionState.xml";
+        static Dictionary<string, object> sessionState = new Dictionary<string, object>();
+        static readonly List<Type> _knownTypes = new List<Type>();
+        const string SessionStateFilename = "_sessionState.xml";
 
         /// <summary>
         /// Provides access to global session state for the current session.  This state is
@@ -35,7 +31,7 @@ namespace GridAppWithoutTheNoise.Common
         /// </summary>
         public static Dictionary<string, object> SessionState
         {
-            get { return _sessionState; }
+            get { return sessionState; }
         }
 
         /// <summary>
@@ -58,7 +54,7 @@ namespace GridAppWithoutTheNoise.Common
         public static async Task SaveAsync()
         {
             // Save the navigation state for all registered frames
-            foreach (var weakFrameReference in _registeredFrames)
+            foreach (var weakFrameReference in RegisteredFrames)
             {
                 Frame frame;
                 if (weakFrameReference.TryGetTarget(out frame))
@@ -67,15 +63,13 @@ namespace GridAppWithoutTheNoise.Common
                 }
             }
 
-            // Serialize the session state synchronously to avoid asynchronous access to shared
-            // state
-            MemoryStream sessionData = new MemoryStream();
-            DataContractSerializer serializer = new DataContractSerializer(typeof(Dictionary<string, object>), _knownTypes);
-            serializer.WriteObject(sessionData, _sessionState);
+            var sessionData = new MemoryStream();
+            var serializer = new DataContractSerializer(typeof(Dictionary<string, object>), _knownTypes);
+            serializer.WriteObject(sessionData, sessionState);
 
             // Get an output stream for the SessionState file and write the state asynchronously
-            StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(sessionStateFilename, CreationCollisionOption.ReplaceExisting);
-            using (Stream fileStream = await file.OpenStreamForWriteAsync())
+            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(SessionStateFilename, CreationCollisionOption.ReplaceExisting);
+            using (var fileStream = await file.OpenStreamForWriteAsync())
             {
                 sessionData.Seek(0, SeekOrigin.Begin);
                 await sessionData.CopyToAsync(fileStream);
@@ -94,19 +88,19 @@ namespace GridAppWithoutTheNoise.Common
         /// completes.</returns>
         public static async Task RestoreAsync()
         {
-            _sessionState = new Dictionary<String, Object>();
+            sessionState = new Dictionary<String, Object>();
 
             // Get the input stream for the SessionState file
-            StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(sessionStateFilename);
-            using (IInputStream inStream = await file.OpenSequentialReadAsync())
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SessionStateFilename);
+            using (var inStream = await file.OpenSequentialReadAsync())
             {
                 // Deserialize the Session State
-                DataContractSerializer serializer = new DataContractSerializer(typeof(Dictionary<string, object>), _knownTypes);
-                _sessionState = (Dictionary<string, object>)serializer.ReadObject(inStream.AsStreamForRead());
+                var serializer = new DataContractSerializer(typeof(Dictionary<string, object>), _knownTypes);
+                sessionState = (Dictionary<string, object>)serializer.ReadObject(inStream.AsStreamForRead());
             }
 
             // Restore any registered frames to their saved state
-            foreach (var weakFrameReference in _registeredFrames)
+            foreach (var weakFrameReference in RegisteredFrames)
             {
                 Frame frame;
                 if (weakFrameReference.TryGetTarget(out frame))
@@ -117,11 +111,11 @@ namespace GridAppWithoutTheNoise.Common
             }
         }
 
-        private static DependencyProperty FrameSessionStateKeyProperty =
+        static readonly DependencyProperty FrameSessionStateKeyProperty =
             DependencyProperty.RegisterAttached("_FrameSessionStateKey", typeof(String), typeof(SuspensionManager), null);
-        private static DependencyProperty FrameSessionStateProperty =
+        static readonly DependencyProperty FrameSessionStateProperty =
             DependencyProperty.RegisterAttached("_FrameSessionState", typeof(Dictionary<String, Object>), typeof(SuspensionManager), null);
-        private static List<WeakReference<Frame>> _registeredFrames = new List<WeakReference<Frame>>();
+        static readonly List<WeakReference<Frame>> RegisteredFrames = new List<WeakReference<Frame>>();
 
         /// <summary>
         /// Registers a <see cref="Frame"/> instance to allow its navigation history to be saved to
@@ -150,7 +144,7 @@ namespace GridAppWithoutTheNoise.Common
             // Use a dependency property to associate the session key with a frame, and keep a list of frames whose
             // navigation state should be managed
             frame.SetValue(FrameSessionStateKeyProperty, sessionStateKey);
-            _registeredFrames.Add(new WeakReference<Frame>(frame));
+            RegisteredFrames.Add(new WeakReference<Frame>(frame));
 
             // Check to see if navigation state can be restored
             RestoreFrameNavigationState(frame);
@@ -168,7 +162,7 @@ namespace GridAppWithoutTheNoise.Common
             // Remove session state and remove the frame from the list of frames whose navigation
             // state will be saved (along with any weak references that are no longer reachable)
             SessionState.Remove((String)frame.GetValue(FrameSessionStateKeyProperty));
-            _registeredFrames.RemoveAll((weakFrameReference) =>
+            RegisteredFrames.RemoveAll(weakFrameReference =>
             {
                 Frame testFrame;
                 return !weakFrameReference.TryGetTarget(out testFrame) || testFrame == frame;
@@ -198,11 +192,11 @@ namespace GridAppWithoutTheNoise.Common
                 if (frameSessionKey != null)
                 {
                     // Registered frames reflect the corresponding session state
-                    if (!_sessionState.ContainsKey(frameSessionKey))
+                    if (!sessionState.ContainsKey(frameSessionKey))
                     {
-                        _sessionState[frameSessionKey] = new Dictionary<String, Object>();
+                        sessionState[frameSessionKey] = new Dictionary<String, Object>();
                     }
-                    frameState = (Dictionary<String, Object>)_sessionState[frameSessionKey];
+                    frameState = (Dictionary<String, Object>)sessionState[frameSessionKey];
                 }
                 else
                 {

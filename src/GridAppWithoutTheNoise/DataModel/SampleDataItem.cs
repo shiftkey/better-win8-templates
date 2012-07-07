@@ -10,22 +10,22 @@ namespace GridAppWithoutTheNoise.DataModel
         public SampleDataItem(String uniqueId, String title, String subtitle, String imagePath, String description, String content, SampleDataGroup group)
             : base(uniqueId, title, subtitle, imagePath, description)
         {
-            this._content = content;
-            this._group = group;
+            this.content = content;
+            this.group = group;
         }
 
-        private string _content = string.Empty;
+        string content = string.Empty;
         public string Content
         {
-            get { return this._content; }
-            set { this.SetProperty(ref this._content, value); }
+            get { return content; }
+            set { SetProperty(ref content, value); }
         }
 
-        private SampleDataGroup _group;
+        SampleDataGroup group;
         public SampleDataGroup Group
         {
-            get { return this._group; }
-            set { this.SetProperty(ref this._group, value); }
+            get { return group; }
+            set { SetProperty(ref group, value); }
         }
     }
 }
