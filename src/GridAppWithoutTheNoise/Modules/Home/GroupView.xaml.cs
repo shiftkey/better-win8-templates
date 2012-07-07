@@ -15,8 +15,12 @@ namespace GridAppWithoutTheNoise.Modules.Home
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             var group = SampleDataSource.GetGroup((String)navigationParameter);
-            DefaultViewModel["Group"] = group;
-            DefaultViewModel["Items"] = group.Items;
+            var viewModel = new GroupViewModel
+            {
+                Group = group,
+                Items = group.Items
+            };
+            DataContext = viewModel;
         }
 
         void ItemViewItemClick(object sender, ItemClickEventArgs e)

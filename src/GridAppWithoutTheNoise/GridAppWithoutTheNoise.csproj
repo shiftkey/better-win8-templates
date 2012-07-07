@@ -109,6 +109,7 @@
     <Compile Include="DataModel\SampleDataCommon.cs" />
     <Compile Include="DataModel\SampleDataGroup.cs" />
     <Compile Include="DataModel\SampleDataItem.cs" />
+    <Compile Include="Modules\Home\GroupViewModel.cs" />
     <Compile Include="Modules\Home\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
