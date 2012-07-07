@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using GridAppWithoutTheNoise.DataModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +18,11 @@ namespace GridAppWithoutTheNoise.Modules.Home
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             var sampleDataGroups = SampleDataSource.GetGroups((String)navigationParameter);
-            DefaultViewModel["Groups"] = sampleDataGroups;
+            var viewModel = new HomeViewModel
+                {
+                Groups = new ObservableCollection<SampleDataGroup>(sampleDataGroups)
+            };
+            DataContext = viewModel;
         }
 
         void HeaderClick(object sender, RoutedEventArgs e)

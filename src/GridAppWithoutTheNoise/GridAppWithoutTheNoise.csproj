@@ -116,6 +116,7 @@
     <Compile Include="Modules\Home\GroupView.xaml.cs">
       <DependentUpon>GroupView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Home\HomeViewModel.cs" />
     <Compile Include="Modules\Home\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
