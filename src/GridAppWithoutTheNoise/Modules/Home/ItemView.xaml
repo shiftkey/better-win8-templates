@@ -1,6 +1,6 @@
 ﻿<common:LayoutAwarePage
     x:Name="pageRoot"
-    x:Class="GridAppWithoutTheNoise.ItemDetailPage"
+    x:Class="GridAppWithoutTheNoise.Modules.Home.ItemView"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
     IsTabStop="false"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"

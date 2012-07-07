@@ -1,5 +1,6 @@
 ﻿using System;
 using GridAppWithoutTheNoise.Common;
+using GridAppWithoutTheNoise.Modules.Home;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -35,7 +36,7 @@ namespace GridAppWithoutTheNoise
 
             if (rootFrame.Content == null)
             {
-                if (!rootFrame.Navigate(typeof(GroupedItemsPage), "AllGroups"))
+                if (!rootFrame.Navigate(typeof(HomeView), "AllGroups"))
                 {
                     throw new Exception("Failed to create initial page");
                 }

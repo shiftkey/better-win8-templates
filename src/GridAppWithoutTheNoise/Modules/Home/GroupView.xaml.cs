@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using GridAppWithoutTheNoise.DataModel;
 using Windows.UI.Xaml.Controls;
 
-namespace GridAppWithoutTheNoise
+namespace GridAppWithoutTheNoise.Modules.Home
 {
-    public sealed partial class GroupDetailPage
+    public sealed partial class GroupView
     {
-        public GroupDetailPage()
+        public GroupView()
         {
             InitializeComponent();
         }
@@ -22,7 +22,7 @@ namespace GridAppWithoutTheNoise
         void ItemViewItemClick(object sender, ItemClickEventArgs e)
         {
             var itemId = ((SampleDataItem)e.ClickedItem).UniqueId;
-            Frame.Navigate(typeof(ItemDetailPage), itemId);
+            Frame.Navigate(typeof(ItemView), itemId);
         }
     }
 }

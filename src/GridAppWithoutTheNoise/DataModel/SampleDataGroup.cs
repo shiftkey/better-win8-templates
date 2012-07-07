@@ -20,7 +20,7 @@ namespace GridAppWithoutTheNoise.DataModel
         
         public IEnumerable<SampleDataItem> TopItems
         {
-            // Provides a subset of the full items collection to bind to from a GroupedItemsPage
+            // Provides a subset of the full items collection to bind to from a HomeView
             // for two reasons: GridView will not virtualize large items collections, and it
             // improves the user experience when browsing through groups with large numbers of
             // items.

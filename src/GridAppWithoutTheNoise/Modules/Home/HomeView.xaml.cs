@@ -4,11 +4,11 @@ using GridAppWithoutTheNoise.DataModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace GridAppWithoutTheNoise
+namespace GridAppWithoutTheNoise.Modules.Home
 {
-    public sealed partial class GroupedItemsPage
+    public sealed partial class HomeView
     {
-        public GroupedItemsPage()
+        public HomeView()
         {
             InitializeComponent();
         }
@@ -27,7 +27,7 @@ namespace GridAppWithoutTheNoise
 
             // Navigate to the appropriate destination page, configuring the new page
             // by passing required information as a navigation parameter
-            Frame.Navigate(typeof(GroupDetailPage), ((SampleDataGroup)group).UniqueId);
+            Frame.Navigate(typeof(GroupView), ((SampleDataGroup)group).UniqueId);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace GridAppWithoutTheNoise
             // Navigate to the appropriate destination page, configuring the new page
             // by passing required information as a navigation parameter
             var itemId = ((SampleDataItem)e.ClickedItem).UniqueId;
-            Frame.Navigate(typeof(ItemDetailPage), itemId);
+            Frame.Navigate(typeof(ItemView), itemId);
         }
     }
 }

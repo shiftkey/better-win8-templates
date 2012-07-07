@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using GridAppWithoutTheNoise.DataModel;
 
-namespace GridAppWithoutTheNoise
+namespace GridAppWithoutTheNoise.Modules.Home
 {
-    public sealed partial class ItemDetailPage
+    public sealed partial class ItemView
     {
-        public ItemDetailPage()
+        public ItemView()
         {
             InitializeComponent();
         }

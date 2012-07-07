@@ -109,14 +109,14 @@
     <Compile Include="DataModel\SampleDataCommon.cs" />
     <Compile Include="DataModel\SampleDataGroup.cs" />
     <Compile Include="DataModel\SampleDataItem.cs" />
-    <Compile Include="GroupedItemsPage.xaml.cs">
-      <DependentUpon>GroupedItemsPage.xaml</DependentUpon>
+    <Compile Include="Modules\Home\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GroupDetailPage.xaml.cs">
-      <DependentUpon>GroupDetailPage.xaml</DependentUpon>
+    <Compile Include="Modules\Home\GroupView.xaml.cs">
+      <DependentUpon>GroupView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ItemDetailPage.xaml.cs">
-      <DependentUpon>ItemDetailPage.xaml</DependentUpon>
+    <Compile Include="Modules\Home\ItemView.xaml.cs">
+      <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModel\SampleDataSource.cs" />
@@ -152,15 +152,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GroupedItemsPage.xaml">
+    <Page Include="Modules\Home\HomeView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GroupDetailPage.xaml">
+    <Page Include="Modules\Home\GroupView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ItemDetailPage.xaml">
+    <Page Include="Modules\Home\ItemView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
