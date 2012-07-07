@@ -21,8 +21,14 @@ namespace GridAppWithoutTheNoise.Modules.Home
 
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             var item = SampleDataSource.GetItem((String)navigationParameter);
-            DefaultViewModel["Group"] = item.Group;
-            DefaultViewModel["Items"] = item.Group.Items;
+            // TODO: simplify this viewmodel
+            var viewModel = new ItemViewModel
+                {
+                    SelectedItem = item,
+                    Group = item.Group,
+                    Items = item.Group.Items
+                };
+            DataContext = viewModel;
             flipView.SelectedItem = item;
         }
 

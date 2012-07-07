@@ -118,6 +118,7 @@
     <Compile Include="Modules\Home\ItemView.xaml.cs">
       <DependentUpon>ItemView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\Home\ItemViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataModel\SampleDataSource.cs" />
     <Compile Include="Common\BindableBase.cs" />
